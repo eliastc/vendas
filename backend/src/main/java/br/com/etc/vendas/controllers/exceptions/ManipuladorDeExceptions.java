@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.com.etc.vendas.services.exceptions.EntidadeNaoEncontradaException;
+import br.com.etc.vendas.services.exceptions.ExcecaoDeBaseDeDados;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -22,7 +23,19 @@ public class ManipuladorDeExceptions {
 		erro.setErro("Recurso não encontrado");
 		erro.setMensagem(e.getMessage());
 		erro.setCaminho(request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
-				
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);				
+	}
+	
+	
+	@ExceptionHandler(ExcecaoDeBaseDeDados.class)
+	public ResponseEntity<ErroPadrao> database(ExcecaoDeBaseDeDados e, HttpServletRequest request) {
+		HttpStatus erroStatus = HttpStatus.BAD_REQUEST;
+		ErroPadrao erro = new ErroPadrao();
+		erro.setTimesstamp(Instant.now());
+		erro.setStatus(erroStatus.value());
+		erro.setErro("Violação do banco de dados");
+		erro.setMensagem(e.getMessage());
+		erro.setCaminho(request.getRequestURI());
+		return ResponseEntity.status(erroStatus).body(erro);				
 	}
 }

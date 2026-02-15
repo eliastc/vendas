@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import br.com.etc.vendas.dto.CategoryDTO;
 import br.com.etc.vendas.entities.Category;
 import br.com.etc.vendas.repositories.CategoryRepository;
 import br.com.etc.vendas.services.exceptions.EntidadeNaoEncontradaException;
+import br.com.etc.vendas.services.exceptions.ExcecaoDeBaseDeDados;
 import jakarta.persistence.EntityNotFoundException;
 
 
@@ -68,6 +70,33 @@ public class CategoryService {
 		} catch (EntityNotFoundException e) {
 			throw new EntidadeNaoEncontradaException("Categoria não encontrada!");
 		}
+	}
+
+//	Não traz respostas quando deletada o obj, pq no banco não houb=ve alteração na linha
+//	public void delete(Long id) {
+//		if (!repo.existsById(id)) {
+//	        throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
+//	    }
+//		try {
+//			repo.deleteById(id);
+//		} catch (EmptyResultDataAccessException e) {
+//			throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
+//		} catch (DataIntegrityViolationException e ) {
+//			throw new  ExcecaoDeBaseDeDados("Violação de integridade do banco de dados! ");
+//		}		
+//	}
+	
+	public void delete(Long id) {
+	    Category entity = repo.findById(id)
+	        .orElseThrow(() -> 
+	            new EntidadeNaoEncontradaException("Categoria não existe! " + id)
+	        );
+
+	    try {
+	        repo.delete(entity);
+	    } catch (DataIntegrityViolationException e) {
+	        throw new ExcecaoDeBaseDeDados("Violação de integridade do banco de dados!");
+	    }
 	}
 
 }
