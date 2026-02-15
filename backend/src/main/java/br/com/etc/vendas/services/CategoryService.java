@@ -11,6 +11,7 @@ import br.com.etc.vendas.dto.CategoryDTO;
 import br.com.etc.vendas.entities.Category;
 import br.com.etc.vendas.repositories.CategoryRepository;
 import br.com.etc.vendas.services.exceptions.EntidadeNaoEncontradaException;
+import jakarta.persistence.EntityNotFoundException;
 
 
 
@@ -53,6 +54,20 @@ public class CategoryService {
 		entity.setNome(dto.getNome());
 		entity = repo.save(entity);
 		return new CategoryDTO(entity);
+	}
+
+	
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO dto) {
+		try {
+			Category entity = repo.getReferenceById(id);
+			entity.setNome(dto.getNome());
+			entity = repo.save(entity);
+			return new CategoryDTO(entity);
+			
+		} catch (EntityNotFoundException e) {
+			throw new EntidadeNaoEncontradaException("Categoria não encontrada!");
+		}
 	}
 
 }
