@@ -1,10 +1,10 @@
 package br.com.etc.vendas.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,22 +25,7 @@ public class CategoryService {
 	public CategoryService(CategoryRepository repo) {
 		this.repo = repo;
 	}
-	
-	@Transactional(readOnly = true)
-	public List<CategoryDTO> findAll() {
-		List<Category> list = repo.findAll();
 		
-		return list.stream().map(x -> new CategoryDTO(x))
-				.collect(Collectors.toList());
-		
-		
-//		posso fazer assim
-//		List<CategoryDTO> listDto = new ArrayList<>();
-//		for(Category cat : list) {
-//			listDto.add(new CategoryDTO(cat));
-//		}
-//		 return liswtDto;
-	}
 
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
@@ -72,20 +57,6 @@ public class CategoryService {
 		}
 	}
 
-//	Não traz respostas quando deletada o obj, pq no banco não houb=ve alteração na linha
-//	public void delete(Long id) {
-//		if (!repo.existsById(id)) {
-//	        throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
-//	    }
-//		try {
-//			repo.deleteById(id);
-//		} catch (EmptyResultDataAccessException e) {
-//			throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
-//		} catch (DataIntegrityViolationException e ) {
-//			throw new  ExcecaoDeBaseDeDados("Violação de integridade do banco de dados! ");
-//		}		
-//	}
-	
 	public void delete(Long id) {
 	    Category entity = repo.findById(id)
 	        .orElseThrow(() -> 
@@ -99,4 +70,42 @@ public class CategoryService {
 	    }
 	}
 
+	@Transactional(readOnly = true)
+	public Page<CategoryDTO> findAllPaged(Pageable pageable) {
+		Page<Category> page = repo.findAll(pageable);
+		return page.map(x -> new CategoryDTO(x));
+	}
+
 }
+
+//@Transactional(readOnly = true)
+//public List<CategoryDTO> findAll() {
+//	List<Category> list = repo.findAll();
+//	
+//	return list.stream().map(x -> new CategoryDTO(x))
+//			.collect(Collectors.toList());
+//	
+//
+//}
+
+
+//posso fazer assim
+//List<CategoryDTO> listDto = new ArrayList<>();
+//for(Category cat : list) {
+//	listDto.add(new CategoryDTO(cat));
+//}
+// return listDto;
+
+//Não traz respostas quando deletada o obj, pq no banco não houb=ve alteração na linha
+//public void delete(Long id) {
+//	if (!repo.existsById(id)) {
+//        throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
+//    }
+//	try {
+//		repo.deleteById(id);
+//	} catch (EmptyResultDataAccessException e) {
+//		throw new EntidadeNaoEncontradaException("Categoria não encontrada! " + id);
+//	} catch (DataIntegrityViolationException e ) {
+//		throw new  ExcecaoDeBaseDeDados("Violação de integridade do banco de dados! ");
+//	}		
+//}
