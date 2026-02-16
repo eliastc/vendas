@@ -1,13 +1,16 @@
 package br.com.etc.vendas.entities;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -20,7 +23,7 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String nome;
+	private String name;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -28,12 +31,15 @@ public class Category {
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
+	@ManyToMany(mappedBy = "categories")
+    private Set<Product> products = new HashSet<>();
+	
 	public Category() {		
 	}
 	
-	public Category(Long id, String nome) {
+	public Category(Long id, String name) {
 		this.id = id;
-		this.nome = nome;
+		this.name = name;
 	}
 	
 	public Long getId() {
@@ -44,12 +50,12 @@ public class Category {
 		this.id = id;
 	}
 	
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}  
 	
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public Instant getCreatedAt() {
@@ -68,6 +74,10 @@ public class Category {
 	@PreUpdate
 	public void preUpdate() {
 		updatedAt = Instant.now();
+	}
+	
+	public Set<Product> getProducts() {
+		return products;
 	}
 	
 	@Override
