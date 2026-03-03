@@ -3,8 +3,9 @@ package br.com.etc.vendas.entities;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,8 @@ public class Product {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 	
+	@Column(precision = 10, scale = 2, nullable = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	private BigDecimal price;
 	private String imgUrl;
 	
@@ -107,19 +110,16 @@ public class Product {
 	}
 	
 	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (!(o instanceof Product)) return false;
+	    Product other = (Product) o;
+	    return id != null && id.equals(other.getId());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		return Objects.equals(id, other.id);
-	}	
+	public int hashCode() {
+	    return getClass().hashCode();
+	}
+
 }

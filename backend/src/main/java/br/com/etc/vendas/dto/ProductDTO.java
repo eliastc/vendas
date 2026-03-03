@@ -7,12 +7,19 @@ import java.util.Set;
 
 import br.com.etc.vendas.entities.Category;
 import br.com.etc.vendas.entities.Product;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 
 public class ProductDTO {
 	
 	private Long id;
 	private String name;
 	private String description;	
+	
+	@NotNull
+	@DecimalMin(value = "0.00", inclusive = false)
+	@Digits(integer = 8, fraction = 2)
 	private BigDecimal price;
 	private String imgUrl;
 	private Instant date;
@@ -42,6 +49,11 @@ public class ProductDTO {
 		for (Category cat : entity.getCategories()) {
 			this.categories.add(new CategoryDTO(cat));
 		}
+	}
+	
+	public ProductDTO(Product entity, Set<Category> categories) {
+		this(entity);
+		categories.forEach(cat -> this.categories.add(new CategoryDTO(cat)));
 	}
 
 	public Long getId() {

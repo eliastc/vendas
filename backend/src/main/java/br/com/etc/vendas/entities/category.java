@@ -2,7 +2,6 @@ package br.com.etc.vendas.entities;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -81,19 +80,16 @@ public class Category {
 	}
 	
 	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (!(o instanceof Category)) return false;
+	    Category other = (Category) o;
+	    return id != null && id.equals(other.getId());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Category other = (Category) obj;
-		return Objects.equals(id, other.id);
+	public int hashCode() {
+	    return getClass().hashCode();
 	}
+
 }
