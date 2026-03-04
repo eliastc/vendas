@@ -2,7 +2,8 @@ package br.com.etc.vendas.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import br.com.etc.vendas.entities.Category;
@@ -24,7 +25,7 @@ public class ProductDTO {
 	private String imgUrl;
 	private Instant date;
 	
-	private Set<CategoryDTO> categories = new HashSet<>();
+	private List<CategoryDTO> categories = new ArrayList<>();
 	
 	public ProductDTO() {
 	}
@@ -104,11 +105,7 @@ public class ProductDTO {
 		this.date = date;
 	}
 
-	public Set<CategoryDTO> getCategories() {
+	public List<CategoryDTO> getCategories() {
 		return categories;
-	}
-
-	public void setCategories(Set<CategoryDTO> categories) {
-		this.categories = categories;
 	}	
 }
